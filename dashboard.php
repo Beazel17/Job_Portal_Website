@@ -53,6 +53,39 @@ if (isset($_POST['apply'])) {
     }
     exit;
 }
+if (isset($_POST['upload_file'])) {
+    if (isset($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK) {
+        $job_id = $_POST['job_id'];
+        $file_name = $_FILES['file']['name'];
+        $file_tmp = $_FILES['file']['tmp_name'];
+        $upload_dir = 'uploads/';
+
+        if (!is_dir($upload_dir)) {
+            mkdir($upload_dir, 0777, true);
+        }
+
+        $file_path = $upload_dir . time() . "_" . basename($file_name);
+        if (move_uploaded_file($file_tmp, $file_path)) {
+            $sql = "INSERT INTO shared_files (user_id, job_id, file_name, file_path) VALUES (:user_id, :job_id, :file_name, :file_path)";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([
+                ':user_id' => $user_id,
+                ':job_id' => $job_id,
+                ':file_name' => $file_name,
+                ':file_path' => $file_path
+            ]);
+            header("Location: dashboard.php?message=success");
+            exit;
+        } else {
+            header("Location: dashboard.php?message=error");
+            exit;
+        }
+    } else {
+        header("Location: dashboard.php?message=error");
+        exit;
+    }
+}
+
 
 $searchTerm = '';
 if (isset($_GET['search'])) {
@@ -65,7 +98,6 @@ $stmt->bindValue(':searchTerm', '%' . $searchTerm . '%');
 $stmt->execute();
 $jobs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -74,7 +106,10 @@ $jobs = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <title>Find Your Dream Job - Dashboard</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>
+    
+    
+    
+<style>
 body {
     margin: 0;
     padding: 0;
@@ -222,7 +257,7 @@ body {
    
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
             <a class="navbar-brand" href="#">Find Your Dream Job</a>
             <div class="navbar-nav ml-auto">
@@ -233,70 +268,85 @@ body {
         </div>
     </nav>
 
-    <div class="container dashboard-container">
-        <h1 class="dashboard-title">Welcome, <?php echo $user_email; ?>!</h1>
-        <p class="dashboard-description">"The right job is out there, and with patience, perseverance, and a positive mindset, you'll find the one that matches your skills, passion, and goals."</p>
+    <div class="container mt-4">
+        <h1 class="mb-3">Welcome, <?php echo $user_email; ?>!</h1>
+        <p>"The right job is out there, and with patience, perseverance, and a positive mindset, you'll find the one that matches your skills, passion, and goals."</p>
 
+        <!-- Success/Error Message -->
+        <?php
+        if (isset($_GET['message'])) {
+            if ($_GET['message'] == 'success') {
+                echo '<div class="alert alert-success">✅ File uploaded successfully!</div>';
+            } elseif ($_GET['message'] == 'error') {
+                echo '<div class="alert alert-danger">❌ Something went wrong. Please try again.</div>';
+            }
+        }
+        ?>
+
+        <!-- Search Bar -->
         <input type="text" id="search" class="form-control" placeholder="Search Jobs..." onkeyup="searchJobs()">
 
         <h2 class="mt-4">Available Jobs</h2>
 
         <div id="job-list">
             <?php
-                if ($jobs) {
-                    foreach ($jobs as $job) {
-                      
-                        $sql = "SELECT status FROM applications WHERE user_id = :user_id AND job_id = :job_id";
-                        $stmt = $pdo->prepare($sql);
-                        $stmt->bindValue(':user_id', $user_id);
-                        $stmt->bindValue(':job_id', $job['id']);
-                        $stmt->execute();
-                        $application = $stmt->fetch(PDO::FETCH_ASSOC);
-                        
-                        if ($application) {
-                            $status = $application['status'];
-                        } else {
-                            $status = 'none'; 
-                        }
+            if ($jobs) {
+                foreach ($jobs as $job) {
+                    $sql = "SELECT status FROM applications WHERE user_id = :user_id AND job_id = :job_id";
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->bindValue(':user_id', $user_id);
+                    $stmt->bindValue(':job_id', $job['id']);
+                    $stmt->execute();
+                    $application = $stmt->fetch(PDO::FETCH_ASSOC);
+                    
+                    $status = $application ? $application['status'] : 'none';
 
-                        $highlightedTitle = str_ireplace($searchTerm, "<span class='highlight'>" . $searchTerm . "</span>", htmlspecialchars($job['job_title']));
-                        
-                        $buttonClass = 'btn-primary';
-                        $buttonText = 'Apply';
-                        $buttonDisabled = '';
-                        $statusClass = '';
-                        
-                        if ($status == 'pending') {
-                            $buttonClass = 'btn-warning';
-                            $buttonText = 'Application in Process';
-                            $statusClass = 'bg-warning text-dark';
-                            $buttonDisabled = 'disabled';
-                        } elseif ($status == 'hired') {
-                            $buttonClass = 'btn-success';
-                            $buttonText = 'Hired';
-                            $statusClass = 'bg-success text-white';
-                            $buttonDisabled = 'disabled';
-                        } elseif ($status == 'rejected') {
-                            $buttonClass = 'btn-danger';
-                            $buttonText = 'Rejected';
-                            $statusClass = 'bg-danger text-white';
-                            $buttonDisabled = 'disabled';
-                        }
+                    $buttonClass = 'btn-primary';
+                    $buttonText = 'Apply';
+                    $buttonDisabled = '';
+                    $statusClass = '';
 
-                        echo '<div class="job-card ' . $statusClass . '">';
-                        echo '<h3 class="job-title">' . $highlightedTitle . '</h3>';
-                        echo '<p class="job-location"><strong>Location:</strong> ' . htmlspecialchars($job['job_location']) . '</p>';
-                        echo '<p class="job-salary"><strong>Salary:</strong> Php ' . number_format($job['min_salary']) . ' - Php ' . number_format($job['max_salary']) . '</p>';
-                        echo '<p class="job-description">' . nl2br(htmlspecialchars($job['job_description'])) . '</p>';
+                    if ($status == 'pending') {
+                        $buttonClass = 'btn-warning';
+                        $buttonText = 'Application in Process';
+                        $statusClass = 'bg-warning text-dark';
+                        $buttonDisabled = 'disabled';
+                    } elseif ($status == 'hired') {
+                        $buttonClass = 'btn-success';
+                        $buttonText = 'Hired';
+                        $statusClass = 'bg-success text-white';
+                        $buttonDisabled = 'disabled';
+                    } elseif ($status == 'rejected') {
+                        $buttonClass = 'btn-danger';
+                        $buttonText = 'Rejected';
+                        $statusClass = 'bg-danger text-white';
+                        $buttonDisabled = 'disabled';
+                    }
+
+                    echo '<div class="card p-3 mb-3 ' . $statusClass . '">';
+                    echo '<h3>' . htmlspecialchars($job['job_title']) . '</h3>';
+                    echo '<p><strong>Location:</strong> ' . htmlspecialchars($job['job_location']) . '</p>';
+                    echo '<p><strong>Salary:</strong> Php ' . number_format($job['min_salary']) . ' - Php ' . number_format($job['max_salary']) . '</p>';
+                    echo '<p>' . nl2br(htmlspecialchars($job['job_description'])) . '</p>';
+                    
+                    if ($status == 'hired') {
+                        echo '<form method="POST" action="" enctype="multipart/form-data">
+                                <input type="hidden" name="job_id" value="' . $job['id'] . '">
+                                <input type="file" name="file" class="form-control mb-2" required>
+                                <button type="submit" name="upload_file" class="btn btn-info">Share File</button>
+                              </form>';
+                    } else {
                         echo '<form method="POST" action="">
                                 <input type="hidden" name="job_id" value="' . $job['id'] . '">
                                 <button type="submit" name="apply" class="btn ' . $buttonClass . '" ' . $buttonDisabled . '>' . $buttonText . '</button>
                               </form>';
-                        echo '</div>';
                     }
-                } else {
-                    echo '<p>No jobs available.</p>';
+
+                    echo '</div>';
                 }
+            } else {
+                echo '<p>No jobs available.</p>';
+            }
             ?>
         </div>
     </div>
@@ -305,7 +355,7 @@ body {
         function searchJobs() {
             let searchTerm = document.getElementById("search").value;
             $.ajax({
-                url: "dashboard.php", 
+                url: "dashboard.php",
                 type: "GET",
                 data: { search: searchTerm },
                 success: function(response) {

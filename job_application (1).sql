@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 12, 2024 at 07:31 PM
+-- Generation Time: Feb 28, 2025 at 06:30 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -55,6 +55,18 @@ CREATE TABLE `applications` (
   `status` enum('pending','hired','rejected') DEFAULT 'pending'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `applications`
+--
+
+INSERT INTO `applications` (`id`, `user_id`, `job_id`, `applied_at`, `status`) VALUES
+(10, 2, 10, '2025-02-27 18:22:26', 'rejected'),
+(11, 2, 11, '2025-02-27 19:54:42', 'rejected'),
+(12, 2, 12, '2025-02-27 20:09:25', 'hired'),
+(13, 2, 13, '2025-02-27 20:12:47', 'rejected'),
+(14, 2, 14, '2025-02-27 22:11:50', 'hired'),
+(15, 2, 15, '2025-02-28 03:18:31', 'hired');
+
 -- --------------------------------------------------------
 
 --
@@ -71,6 +83,32 @@ CREATE TABLE `jobs` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `jobs`
+--
+
+INSERT INTO `jobs` (`id`, `job_title`, `job_description`, `job_location`, `min_salary`, `max_salary`, `created_at`) VALUES
+(10, 'web.dev', 'web development ', 'MFTB', 100, 110, '2025-02-27 18:18:08'),
+(11, 'web.dev.map', 'web development mapping', 'MFTB', 100, 110, '2025-02-27 19:49:51'),
+(12, 'web.devasd', 'web development asd', 'MFTB', 100, 110, '2025-02-27 20:09:15'),
+(13, 'web.devasd', '34qwr', 'MFTB', 10043, 11043, '2025-02-27 20:12:34'),
+(14, 'web.devasd', 'sdadas', 'MFTB', 10043, 11043, '2025-02-27 22:10:56'),
+(15, 'baligya shabo', 'barato na maka buang pa', 'dvsd', 434, 324234, '2025-02-28 03:17:01');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `malicious_files`
+--
+
+CREATE TABLE `malicious_files` (
+  `id` int(11) NOT NULL,
+  `file_name` varchar(255) NOT NULL,
+  `user_email` varchar(255) NOT NULL,
+  `scan_result` varchar(50) NOT NULL,
+  `detected_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 -- --------------------------------------------------------
 
 --
@@ -84,6 +122,18 @@ CREATE TABLE `notifications` (
   `message` text NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `notifications`
+--
+
+INSERT INTO `notifications` (`id`, `user_id`, `job_id`, `message`, `created_at`) VALUES
+(14, 2, 10, 'Congratulations on being hired for the web.dev position.', '2025-02-27 18:26:20'),
+(15, 2, 10, 'You have successfully uploaded a file: style.css', '2025-02-27 18:48:25'),
+(17, 2, 11, 'Congratulations on being hired for the web.dev.map position.', '2025-02-27 20:09:43'),
+(18, 2, 12, 'Congratulations on being hired for the web.devasd position.', '2025-02-27 22:06:55'),
+(19, 2, 14, 'Congratulations on being hired for the web.devasd position.', '2025-02-27 22:13:01'),
+(20, 2, 15, 'Congratulations on being hired for the baligya shabo position.', '2025-02-28 03:19:04');
 
 -- --------------------------------------------------------
 
@@ -102,6 +152,38 @@ CREATE TABLE `resumes` (
   `education` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `resumes`
+--
+
+INSERT INTO `resumes` (`id`, `user_id`, `name`, `phone`, `address`, `skills`, `experience`, `education`) VALUES
+(3, 2, 'Beazel ray ayuno', '0967382736', 'mampayag manolo fortich bukidnon', 'web.dev', 'none', 'M.E.S , M.N.H.S ,N.B.S.C');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `shared_files`
+--
+
+CREATE TABLE `shared_files` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `job_id` int(11) NOT NULL,
+  `file_name` varchar(255) NOT NULL,
+  `file_path` varchar(255) NOT NULL,
+  `uploaded_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `uploaded_by` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `shared_files`
+--
+
+INSERT INTO `shared_files` (`id`, `user_id`, `job_id`, `file_name`, `file_path`, `uploaded_at`, `uploaded_by`) VALUES
+(11, 2, 15, 'paper_drawing.png', 'uploads/1740712771_paper_drawing.png', '2025-02-28 03:19:31', NULL),
+(14, 2, 15, 'Virus.BAT', 'uploads/1740720232_Virus.BAT', '2025-02-28 05:23:52', NULL),
+(15, 2, 15, 'safe.rar', 'uploads/1740720241_safe.rar', '2025-02-28 05:24:01', NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -115,6 +197,13 @@ CREATE TABLE `users` (
   `created_at` datetime DEFAULT current_timestamp(),
   `first_login` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `personal_email`, `password`, `created_at`, `first_login`) VALUES
+(2, 'ayunosabanpan@gmail.com', '$2y$10$s./qf14uIo0rr7lZDJiVKepYObF67En4iPNi/UtIcS2NT388UBqEO', '2025-02-28 02:18:59', 1);
 
 --
 -- Indexes for dumped tables
@@ -142,6 +231,12 @@ ALTER TABLE `jobs`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `malicious_files`
+--
+ALTER TABLE `malicious_files`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `notifications`
 --
 ALTER TABLE `notifications`
@@ -155,6 +250,14 @@ ALTER TABLE `notifications`
 ALTER TABLE `resumes`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user_id` (`user_id`);
+
+--
+-- Indexes for table `shared_files`
+--
+ALTER TABLE `shared_files`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `job_id` (`job_id`);
 
 --
 -- Indexes for table `users`
@@ -176,31 +279,43 @@ ALTER TABLE `admins`
 -- AUTO_INCREMENT for table `applications`
 --
 ALTER TABLE `applications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `jobs`
 --
 ALTER TABLE `jobs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
+-- AUTO_INCREMENT for table `malicious_files`
+--
+ALTER TABLE `malicious_files`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `resumes`
 --
 ALTER TABLE `resumes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `shared_files`
+--
+ALTER TABLE `shared_files`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables
@@ -225,6 +340,13 @@ ALTER TABLE `notifications`
 --
 ALTER TABLE `resumes`
   ADD CONSTRAINT `resumes_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+
+--
+-- Constraints for table `shared_files`
+--
+ALTER TABLE `shared_files`
+  ADD CONSTRAINT `shared_files_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  ADD CONSTRAINT `shared_files_ibfk_2` FOREIGN KEY (`job_id`) REFERENCES `jobs` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

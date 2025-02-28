@@ -31,7 +31,9 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Emails - Notifications</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
+    
+
+<style>
 body {
     margin: 0;
     padding: 0;
@@ -192,6 +194,15 @@ body {
 
 </style>
 
+
+
+
+
+
+
+
+
+
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -209,21 +220,22 @@ body {
     </nav>
 
     <div class="container mt-5">
-        <h1>Your Notifications</h1>
+    <h1>Your Notifications</h1>
 
-        <?php if ($notifications): ?>
-            <div class="list-group mt-3">
-                <?php foreach ($notifications as $notification): ?>
-                    <div class="list-group-item">
-                        <h5 class="mb-1"><?php echo htmlspecialchars($notification['job_title']); ?> - Notification</h5>
-                        <p><strong>Message:</strong> <?php echo nl2br(htmlspecialchars($notification['message'])); ?></p>
-                        <p><small>Received on: <?php echo htmlspecialchars($notification['created_at']); ?></small></p>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        <?php else: ?>
-            <p class="mt-3">You have no notifications at the moment.</p>
-        <?php endif; ?>
-    </div>
+    <?php if ($notifications): ?>
+        <div class="list-group mt-3">
+            <?php foreach ($notifications as $notification): ?>
+                <div class="list-group-item <?php echo (strpos($notification['message'], 'uploaded a file') !== false) ? 'bg-info text-white' : ''; ?>">
+                    <h5 class="mb-1"><?php echo htmlspecialchars($notification['job_title']); ?> - Notification</h5>
+                    <p><strong>Message:</strong> <?php echo nl2br(htmlspecialchars($notification['message'])); ?></p>
+                    <p><small>Received on: <?php echo htmlspecialchars($notification['created_at']); ?></small></p>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    <?php else: ?>
+        <p class="mt-3">You have no notifications at the moment.</p>
+    <?php endif; ?>
+</div>
+
 </body>
 </html>

@@ -18,6 +18,8 @@ $result = $pdo->query($sql);
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
    
+
+
     <style>
 
 body {
@@ -200,12 +202,12 @@ body {
     }
 }
 </style>
-
 </head>
 <body>
 
     <div class="navbar">
         <div class="title">Find Your Dream Applicant</div>
+        <a href="shared_files.php" class="logout">observe</a>
         <a href="logout.php" class="logout">Logout</a>
     </div>
 
