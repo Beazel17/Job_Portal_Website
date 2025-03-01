@@ -39,7 +39,7 @@ CREATE TABLE `admins` (
 --
 
 INSERT INTO `admins` (`id`, `adminemail`, `password`, `created_at`) VALUES
-(1, 'admin@group3.com', 'group3final', '2024-12-12 09:39:08');
+(1, 'ayunosabanpan@gmail.com', 'ayuno12345', '2024-12-12 09:39:08');
 
 -- --------------------------------------------------------
 

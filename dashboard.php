@@ -10,7 +10,7 @@ $user_id = $_SESSION["id"];
 $user_email = htmlspecialchars($_SESSION["personal_email"]);
 
 define('DB_SERVER', 'localhost');
-define('DB_NAME', 'job_application');
+define('DB_NAME', 'job2');
 define('DB_USERNAME', 'root');
 define('DB_PASSWORD', '');
 

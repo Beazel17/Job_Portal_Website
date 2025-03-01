@@ -3,8 +3,8 @@
 $adminemail = $password = "";
 $adminemail_err = $password_err = $login_err = "";
 
-$correct_email = "admin@group3.com";
-$correct_password = "group3final";
+$correct_email = "ayunosabanpan@gmail.com";
+$correct_password = "ayuno12345";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
